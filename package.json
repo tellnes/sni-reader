@@ -1,0 +1,31 @@
+{
+  "name": "sni-reader",
+  "version": "0.0.0",
+  "description": "Extracts the Server Name Indication from a raw TLS Stream",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Christian Tellnes <christian@tellnes.no> (http://christian.tellnes.com/)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tellnes/sni-reader.git"
+  },
+  "keywords": [
+    "sni",
+    "tls",
+    "servername",
+    "server",
+    "name",
+    "indication",
+    "stream"
+  ],
+  "bugs": {
+    "url": "https://github.com/tellnes/sni-reader/issues"
+  },
+  "homepage": "https://github.com/tellnes/sni-reader",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  }
+}
