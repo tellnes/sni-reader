@@ -83,12 +83,13 @@ module.exports = function(socket, callback) {
     pos += 2 + chunk.readUInt16BE(pos) // CipherSuite
     pos += 1 + chunk.readUInt8(pos) // CompressionMethod
 
+    // If this is the end of the chunk, then there is no extensions
+    if (chunk.length === pos)
+      return finish()
+
     // Extension extensions<0..2^16-1>
     length = chunk.readUInt16BE(pos)
     pos += 2
-
-    if (!length) // No extensions
-      return finish()
 
     // The rest of the handshake should be extensions
     if (length !== chunk.length - pos)
