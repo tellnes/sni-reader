@@ -93,7 +93,7 @@ module.exports = function(socket, callback) {
     // Check lenghts above
     // Instead of having an if after each length read above, we just ignore
     // oob errors and check it here.
-    if (pos > chunk.length)
+    if (isNaN(pos) || pos > chunk.length)
       return error(new ProtocolError())
 
     // If this is the end of the chunk, then there is no extensions
@@ -139,9 +139,6 @@ module.exports = function(socket, callback) {
       value = chunk[pos]
       pos += 1
 
-      if (value !== 0)
-        return finish() // Unknown Name Type
-
       // uint16 HostName.length
       length = chunk.readUInt16BE(pos)
       pos += 2
@@ -150,6 +147,11 @@ module.exports = function(socket, callback) {
       if (length > chunk.length - pos)
         return error(new ProtocolError()) // protocol error
 
+      // Unknown Name Type
+      if (value !== 0) {
+        pos += length
+        continue
+      }
 
       // opaque HostName
       value = chunk.toString('utf8', pos, pos + length)

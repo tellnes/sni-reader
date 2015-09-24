@@ -18,16 +18,77 @@ function next() {
   const file = files.shift()
   if (!file) return
 
+  console.log(file)
+
   const contents = fs.readFileSync(file, 'utf8').split(/\r?\n/g)
 
+  testNormal(contents, function() {
+    testOneAndOne(contents, function() {
+      testRandom(contents, next)
+    })
+  })
+}
+
+function testNormal(contents, cb) {
   const stream = new PassThrough()
   stream.end(new Buffer(contents[0], 'hex'))
+  run(stream, contents[1], cb)
+}
 
-  sni(stream, function(err, sni) {
-    if (err) throw err
+function testOneAndOne(contents, cb) {
+  var index = 0
+  function write() {
+    stream.write(contents[0][index] + contents[0][index + 1], 'hex')
+    index += 2
 
-    assert.equal(contents[1], sni)
+    if (index < contents[0].length)
+      setImmediate(write)
+    else
+      stream.end()
+  }
 
-    next()
+  const stream = new PassThrough()
+  write()
+  run(stream, contents[1], cb)
+}
+
+function testRandom(contents, cb) {
+  var index = 0
+  function write() {
+    var length
+    length = (Math.random() * (contents[0].length / 100 * 5) | 0)
+    if (length < 2) length = 2
+    if (length % 2) length++
+    length = Math.min(contents[0].length, length)
+
+    stream.write(contents[0].slice(index, index + length), 'hex')
+    index += length
+
+    if (index < contents[0].length)
+      setImmediate(write)
+    else
+      stream.end()
+  }
+
+  const stream = new PassThrough()
+  write()
+  run(stream, contents[1], cb)
+}
+
+
+function run(stream, result, cb) {
+  sni(stream, function(err, hostname) {
+    if (err) {
+      if (result === 'protocol error') {
+        assert(err instanceof sni.ProtocolError)
+        assert(err instanceof Error)
+      } else {
+        assert.ifError(err)
+      }
+    } else {
+      assert.equal(result, hostname)
+    }
+
+    cb()
   })
 }

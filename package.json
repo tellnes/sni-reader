@@ -4,7 +4,8 @@
   "description": "Extracts the Server Name Indication from a raw TLS Stream",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test/test.js",
+    "coverage": "istanbul cover test/test.js"
   },
   "author": "Christian Tellnes <christian@tellnes.no> (http://christian.tellnes.com/)",
   "license": "MIT",
@@ -27,5 +28,8 @@
   "homepage": "https://github.com/tellnes/sni-reader",
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
+  },
+  "devDependencies": {
+    "istanbul": "^0.3.21"
   }
 }
