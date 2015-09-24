@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "node test/test.js",
-    "coverage": "istanbul cover test/test.js"
+    "coverage": "istanbul cover test/test.js",
+    "coveralls": "npm run coverage && cat ./coverage/lcov.info | coveralls --verbose"
   },
   "author": "Christian Tellnes <christian@tellnes.no> (http://christian.tellnes.com/)",
   "license": "MIT",
@@ -30,6 +31,7 @@
     "registry": "https://registry.npmjs.org"
   },
   "devDependencies": {
-    "istanbul": "^0.3.21"
+    "istanbul": "^0.3.21",
+    "coveralls": "^2.11.4"
   }
 }
