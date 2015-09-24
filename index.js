@@ -1,5 +1,7 @@
 'use strict'
 
+const inherits = require('util').inherits
+
 module.exports = function(socket, callback) {
   var readLength
   var readCallback
@@ -37,7 +39,7 @@ module.exports = function(socket, callback) {
     // If there is less bytes than requested means EOF.
     // That means we got a protocol error.
     if (chunk.length !== length)
-      return finish()
+      return error(new ProtocolError())
 
     readBuffer.push(chunk)
     cb(chunk)
@@ -55,7 +57,7 @@ module.exports = function(socket, callback) {
     pos += 1
 
     if (type !== 22) // Not TLS Handshake
-      return finish()
+      return error(new ProtocolError())
 
     // ProtocolVersion
     pos += 2 // version
@@ -77,7 +79,7 @@ module.exports = function(socket, callback) {
     pos += 1
 
     if (value !== 1) // Not ClientHello
-      return finish()
+      return error(new ProtocolError())
 
     pos += 3 // Handshake.Length
 
@@ -92,7 +94,7 @@ module.exports = function(socket, callback) {
     // Instead of having an if after each length read above, we just ignore
     // oob errors and check it here.
     if (pos > chunk.length)
-      return finish() // protocol error
+      return error(new ProtocolError())
 
     // If this is the end of the chunk, then there is no extensions
     if (chunk.length === pos)
@@ -104,7 +106,7 @@ module.exports = function(socket, callback) {
 
     // The rest of the handshake should be extensions
     if (length !== chunk.length - pos)
-      return finish() // Protocol error
+      return error(new ProtocolError())
 
     // Loop throught extensions
     while (pos < chunk.length) {
@@ -118,7 +120,7 @@ module.exports = function(socket, callback) {
 
       // Length can not be bigger than the rest of the packet
       if (length > chunk.length - pos)
-        return finish() // protocol error
+        return error(new ProtocolError())
 
       if (value !== 0) { // some other extension
         pos += length
@@ -131,7 +133,7 @@ module.exports = function(socket, callback) {
 
       // Length can not be bigger than the rest of the packet
       if (length > chunk.length - pos)
-        return finish() // protocol error
+        return error(new ProtocolError())
 
       // enum NameType
       value = chunk[pos]
@@ -146,7 +148,7 @@ module.exports = function(socket, callback) {
 
       // Length can not be bigger than the rest of the packet
       if (length > chunk.length - pos)
-        return finish() // protocol error
+        return error(new ProtocolError()) // protocol error
 
 
       // opaque HostName
@@ -157,4 +159,11 @@ module.exports = function(socket, callback) {
     // SNI Not present
     finish()
   }
+}
+
+inherits(ProtocolError, Error)
+module.exports.ProtocolError = ProtocolError
+function ProtocolError() {
+  Error.captureStackTrace(this, ProtocolError)
+  Error.call(this)
 }
