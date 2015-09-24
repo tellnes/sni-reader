@@ -1,5 +1,8 @@
 # sni-reader
 
+[![Version npm](https://img.shields.io/npm/v/sni-reader.svg?style=flat-square)](https://www.npmjs.com/package/sni-reader)[![npm Downloads](https://img.shields.io/npm/dm/sni-reader.svg?style=flat-square)](https://www.npmjs.com/package/sni-reader)[![Build Status](https://img.shields.io/travis/tellnes/sni-reader/master.svg?style=flat-square)](https://travis-ci.org/tellnes/sni-reader)[![Coverage Status](https://img.shields.io/coveralls/tellnes/sni-reader/master.svg?style=flat-square)](https://coveralls.io/github/tellnes/sni-reader?branch=master)[![Dependencies](https://img.shields.io/david/tellnes/sni-reader.svg?style=flat-square)](https://david-dm.org/tellnes/sni-reader)
+
+
 `sni-reader` extracts the Server Name Indication from a raw TLS stream. It reads
 the ClientHello message and extracts the value of the SNI extension if the
 extension is present.
