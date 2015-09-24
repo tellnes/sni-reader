@@ -84,9 +84,15 @@ module.exports = function(socket, callback) {
     pos += 2 // ProtocolVersion
     pos += 28 // Random.random_bytes
     pos += 4 // Random.gmt_unix_time
-    pos += 1 + chunk.readUInt8(pos) // SessionID
-    pos += 2 + chunk.readUInt16BE(pos) // CipherSuite
-    pos += 1 + chunk.readUInt8(pos) // CompressionMethod
+    pos += 1 + chunk.readUInt8(pos, true) // SessionID
+    pos += 2 + chunk.readUInt16BE(pos, true) // CipherSuite
+    pos += 1 + chunk.readUInt8(pos, true) // CompressionMethod
+
+    // Check lenghts above
+    // Instead of having an if after each length read above, we just ignore
+    // oob errors and check it here.
+    if (pos > chunk.length)
+      return finish() // protocol error
 
     // If this is the end of the chunk, then there is no extensions
     if (chunk.length === pos)
@@ -110,6 +116,10 @@ module.exports = function(socket, callback) {
       length = chunk.readUInt16BE(pos)
       pos += 2
 
+      // Length can not be bigger than the rest of the packet
+      if (length > chunk.length - pos)
+        return finish() // protocol error
+
       if (value !== 0) { // some other extension
         pos += length
         continue
@@ -118,6 +128,10 @@ module.exports = function(socket, callback) {
       // uint16 ServerNameList.length
       length = chunk.readUInt16BE(pos)
       pos += 2
+
+      // Length can not be bigger than the rest of the packet
+      if (length > chunk.length - pos)
+        return finish() // protocol error
 
       // enum NameType
       value = chunk[pos]
@@ -129,6 +143,11 @@ module.exports = function(socket, callback) {
       // uint16 HostName.length
       length = chunk.readUInt16BE(pos)
       pos += 2
+
+      // Length can not be bigger than the rest of the packet
+      if (length > chunk.length - pos)
+        return finish() // protocol error
+
 
       // opaque HostName
       value = chunk.toString('utf8', pos, pos + length)
