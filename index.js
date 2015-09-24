@@ -34,6 +34,11 @@ module.exports = function(socket, callback) {
       return
     }
 
+    // If there is less bytes than requested means EOF.
+    // That means we got a protocol error.
+    if (chunk.length !== length)
+      return finish()
+
     readBuffer.push(chunk)
     cb(chunk)
   }
