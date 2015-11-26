@@ -1,6 +1,6 @@
 {
   "name": "sni-reader",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Extracts the Server Name Indication from a raw TLS Stream",
   "main": "index.js",
   "scripts": {
