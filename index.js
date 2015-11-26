@@ -100,6 +100,10 @@ module.exports = function(socket, callback) {
     if (chunk.length === pos)
       return finish()
 
+    // Check that there is at least two bytes left
+    if (chunk.length < (pos + 2))
+      return error(new ProtocolError())
+
     // Extension extensions<0..2^16-1>
     length = chunk.readUInt16BE(pos)
     pos += 2
