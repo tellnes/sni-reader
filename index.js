@@ -66,6 +66,10 @@ module.exports = function(socket, callback) {
     var length = chunk.readUInt16BE(pos)
     pos += 2
 
+    // We must at least read something
+    if (length === 0)
+      return error(new ProtocolError())
+
     read(length, onFragment)
   }
 
