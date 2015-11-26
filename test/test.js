@@ -12,13 +12,15 @@ const files = fs.readdirSync(dir).map(function(file) {
   return path.join(dir, file)
 })
 
+var index = 0
+
 next()
 
 function next() {
-  const file = files.shift()
+  const file = files[index++]
   if (!file) return
 
-  console.log(file)
+  console.log(index + '/' + files.length + ' - ' + file)
 
   const contents = fs.readFileSync(file, 'utf8').split(/\r?\n/g)
 
