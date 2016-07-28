@@ -32,6 +32,6 @@
   },
   "devDependencies": {
     "istanbul": "^0.4.1",
-    "coveralls": "^2.11.4"
+    "coveralls": "^2.11.12"
   }
 }
